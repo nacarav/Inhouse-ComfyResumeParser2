@@ -1,0 +1,100 @@
+:root {
+  --section-length: 350px;
+  --round: 20px
+}
+
+body {
+  color: rgb(232, 232, 232);
+  background-color: rgb(61, 61, 61);
+  padding: 20px;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.parser {
+  display: flex;
+  flex-direction: column;
+  height: var(--section-length);
+  width: var(--section-length);
+  justify-content: space-evenly;
+  background-color: rgb(50, 50, 50);
+  padding: 40px;
+  margin: 20px 0;
+  border-radius: var(--round);
+}
+
+.output {
+  border-top: solid;
+  padding-top: 40px;
+  margin-top: 40px;
+  background-color: rgb(61, 61, 61);
+}
+
+.output-text {
+  border: solid;
+  padding: 20px;
+  text-align: center;
+  line-height: var(--section-length);
+  width: var(--section-length);
+  border-radius: var(--round);
+  background-color: rgb(29, 29, 29);
+  
+}
+
+h2 {
+  margin: 0;
+}
+
+button {
+  background-color: rgb(8, 146, 8);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 15px;
+  border-radius: var(--round);
+}
+
+.upload {
+  color: transparent;
+  height: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload::before {
+  content: '+';
+  color: rgb(232, 232, 232);
+  border-color: rgb(232, 232, 232);
+  border: solid;
+  border-bottom: hidden;
+  border-top-left-radius: var(--round);
+  border-top-right-radius: var(--round);
+  font-size: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.upload::after {
+  background-color: white;
+}
+
+
+.upload::-webkit-file-upload-button {
+  /* visibility: hidden; */
+  height: 30px;
+  margin: auto;
+  width: 100%;
+  background-color: rgb(50, 50, 50);
+  border: solid;
+  color: rgb(232, 232, 232);
+  border-top: hidden;
+  border-bottom-right-radius: var(--round);
+  border-bottom-left-radius: var(--round);
+  padding: 30px;
+
+}
+
