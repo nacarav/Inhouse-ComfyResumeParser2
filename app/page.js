@@ -1,12 +1,25 @@
 'use client'
 
-import React, { FC } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const Parser = ({ type, setOutput, setLoading }) => {
+export default function App() {
+  const [output, setOutput] = useState('Upload a PDF to get started');
+  const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const [analysisType, setAnalysisType] = useState('resume');
+  const [showLengthTooltip, setShowLengthTooltip] = useState(false);
+  const [showPersonalityTooltip, setShowPersonalityTooltip] = useState(false);
   const fileInputRef = React.useRef(null);
+
+  // Universal token range
+  const minTokens = 400;
+  const maxTokens = 1800;
+  const defaultTokens = 1100;
+
+  const [maxResponseTokens, setMaxResponseTokens] = useState(defaultTokens);
+  const [temperature, setTemperature] = useState(0.9); // Default middle value
 
   const updateFile = (e) => {
     setFile(e.target.files[0]);
@@ -14,6 +27,14 @@ const Parser = ({ type, setOutput, setLoading }) => {
 
   const handleChooseFile = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleLengthSliderChange = (e) => {
+    setMaxResponseTokens(parseInt(e.target.value));
+  };
+
+  const handlePersonalitySliderChange = (e) => {
+    setTemperature(parseFloat(e.target.value));
   };
 
   const handleUpload = async () => {
@@ -30,16 +51,15 @@ const Parser = ({ type, setOutput, setLoading }) => {
 
     setLoading(true);
 
-    // Determine type based on parser type
-    const isResume = type === 'Resume Reviewer';
-    const isSummary = type === 'PDF Summarizer';
-
+    const isSummary = analysisType === 'summary';
     setOutput(isResume ? 'Processing PDF and analyzing resume...' : 'Processing PDF and generating summary...');
 
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('type', isSummary ? 'summary' : 'resume');
+      formData.append('type', analysisType);
+      formData.append('maxTokens', maxResponseTokens.toString());
+      formData.append('temperature', temperature.toString());
 
       const response = await fetch('/api/parse', {
         method: 'POST',
@@ -68,48 +88,142 @@ const Parser = ({ type, setOutput, setLoading }) => {
   };
 
   return (
-    <div className='parser'>
-      <h2>{type}</h2>
-      <input
-        ref={fileInputRef}
-        className='file-input-hidden'
-        type="file"
-        accept=".pdf"
-        onChange={updateFile}
-      />
-
-      {!file ? (
-        <button className='choose-file-btn' onClick={handleChooseFile}>
-          📄 Choose File
-        </button>
-      ) : (
-        <div className='file-selected'>
-          <div className='file-info'>
-            <span className='file-name'>📄 {file.name}</span>
-            <button className='change-file-btn' onClick={handleChooseFile}>
-              Change
-            </button>
-          </div>
-          <button className='upload-btn' onClick={handleUpload}>
-            Upload & Analyze
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default function App() {
-  const [output, setOutput] = useState('Upload a PDF to get started');
-  const [loading, setLoading] = useState(false);
-
-  return (
     <div className='container'>
       <h1>Inhouse Parser</h1>
-      <div className='parsers-grid'>
-        <Parser type="Resume Reviewer" setOutput={setOutput} setLoading={setLoading}/>
-        <Parser type="PDF Summarizer" setOutput={setOutput} setLoading={setLoading}/>
+
+      <div className='main-grid'>
+        {/* Upload Quadrant */}
+        <div className='upload-quadrant'>
+          <h2>Upload & Configure</h2>
+
+          {/* Analysis Type Selector */}
+          <div className='type-selector'>
+            <label className='type-option'>
+              <input
+                type='radio'
+                name='analysisType'
+                value='resume'
+                checked={analysisType === 'resume'}
+                onChange={(e) => setAnalysisType(e.target.value)}
+              />
+              <span>Resume Reviewer</span>
+            </label>
+            <label className='type-option'>
+              <input
+                type='radio'
+                name='analysisType'
+                value='summary'
+                checked={analysisType === 'summary'}
+                onChange={(e) => setAnalysisType(e.target.value)}
+              />
+              <span>PDF Summarizer</span>
+            </label>
+          </div>
+
+          {/* Detail Level slider */}
+          <div className='length-control'>
+            <div className='length-header'>
+              <span className='length-label'>Detail Level</span>
+              <div className='info-icon-container'>
+                <span
+                  className='info-icon'
+                  onMouseEnter={() => setShowLengthTooltip(true)}
+                  onMouseLeave={() => setShowLengthTooltip(false)}
+                >
+                  ℹ️
+                </span>
+                {showLengthTooltip && (
+                  <div className='tooltip'>
+                    Controls response depth ({minTokens}-{maxTokens} tokens)
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className='slider-container'>
+              <span className='slider-label'>Brief</span>
+              <input
+                type='range'
+                min={minTokens}
+                max={maxTokens}
+                value={maxResponseTokens}
+                onChange={handleLengthSliderChange}
+                className='length-slider'
+              />
+              <span className='slider-label'>Detailed</span>
+            </div>
+            <div className='token-display'>{maxResponseTokens} tokens</div>
+          </div>
+
+          {/* File Input */}
+          <input
+            ref={fileInputRef}
+            className='file-input-hidden'
+            type="file"
+            accept=".pdf"
+            onChange={updateFile}
+          />
+
+          {!file ? (
+            <button className='choose-file-btn' onClick={handleChooseFile}>
+              📄 Choose File
+            </button>
+          ) : (
+            <div className='file-selected'>
+              <div className='file-info'>
+                <span className='file-name'>📄 {file.name}</span>
+                <button className='change-file-btn' onClick={handleChooseFile}>
+                  Change
+                </button>
+              </div>
+              <button className='upload-btn' onClick={handleUpload}>
+                Upload & Analyze
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Personality Slider Quadrant */}
+        <div className='personality-quadrant'>
+          <div className='personality-control'>
+            <div className='personality-header'>
+              <span className='personality-label'>Response Personality</span>
+              <div className='info-icon-container'>
+                <span
+                  className='info-icon'
+                  onMouseEnter={() => setShowPersonalityTooltip(true)}
+                  onMouseLeave={() => setShowPersonalityTooltip(false)}
+                >
+                  ℹ️
+                </span>
+                {showPersonalityTooltip && (
+                  <div className='tooltip'>
+                    Controls creativity (temperature: 0.2-1.6)
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className='vertical-slider-container'>
+              <span className='vertical-slider-label'>Vibrant</span>
+              <input
+                type='range'
+                min='0.2'
+                max='1.6'
+                step='0.1'
+                value={temperature}
+                onChange={handlePersonalitySliderChange}
+                className='personality-slider'
+                orient='vertical'
+              />
+              <span className='vertical-slider-label'>Stoic</span>
+            </div>
+
+            <div className='temperature-display'>{temperature.toFixed(1)} temp</div>
+          </div>
+        </div>
       </div>
+
+      {/* Output Section */}
       <div className='output'>
         <h2>Output</h2>
         {loading && <p className='processing-text'>Processing...</p>}

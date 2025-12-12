@@ -7,6 +7,8 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('file');
     const type = formData.get('type'); // 'resume' or 'summary'
+    const maxTokens = parseInt(formData.get('maxTokens')) || 1100;
+    const temperature = parseFloat(formData.get('temperature')) || 0.9;
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -67,9 +69,9 @@ export async function POST(request) {
     // Send to OpenAI based on type
     let result;
     if (type === 'summary') {
-      result = await callOpenAIForSummary(extractedText);
+      result = await callOpenAIForSummary(extractedText, maxTokens, temperature);
     } else {
-      result = await callOpenAIForResume(extractedText);
+      result = await callOpenAIForResume(extractedText, maxTokens, temperature);
     }
 
     return NextResponse.json({
@@ -87,7 +89,7 @@ export async function POST(request) {
   }
 }
 
-async function callOpenAIForResume(resumeText) {
+async function callOpenAIForResume(resumeText, maxTokens, temperature) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   if (!OPENAI_API_KEY) {
@@ -111,6 +113,8 @@ async function callOpenAIForResume(resumeText) {
     console.log('Calling OpenAI API directly');
     console.log('Resume text length:', resumeText.length);
     console.log('Full prompt length:', fullPrompt.length);
+    console.log('Max tokens:', maxTokens);
+    console.log('Temperature:', temperature);
     console.log('========================================');
 
     // Call OpenAI API with parameters matching the ComfyUI workflow
@@ -126,8 +130,8 @@ async function callOpenAIForResume(resumeText) {
           content: fullPrompt
         }
       ],
-      temperature: 0.3, // Middle of the 0.2-0.4 range from workflow
-      max_tokens: 1200, // Middle of the 900-1400 range from workflow
+      temperature: temperature, // User-selected value from personality slider
+      max_tokens: maxTokens, // User-selected value from slider
       top_p: 1.0,
       frequency_penalty: 0,
       presence_penalty: 0,
@@ -156,7 +160,7 @@ async function callOpenAIForResume(resumeText) {
   }
 }
 
-async function callOpenAIForSummary(pdfText) {
+async function callOpenAIForSummary(pdfText, maxTokens, temperature) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   if (!OPENAI_API_KEY) {
@@ -179,6 +183,8 @@ async function callOpenAIForSummary(pdfText) {
     console.log('Calling OpenAI API for PDF Summary');
     console.log('PDF text length:', pdfText.length);
     console.log('Full prompt length:', fullPrompt.length);
+    console.log('Max tokens:', maxTokens);
+    console.log('Temperature:', temperature);
     console.log('========================================');
 
     // Call OpenAI API with parameters for summarization
@@ -194,8 +200,8 @@ async function callOpenAIForSummary(pdfText) {
           content: fullPrompt
         }
       ],
-      temperature: 0.2, // Middle of the 0.1-0.3 range
-      max_tokens: 700,
+      temperature: temperature, // User-selected value from personality slider
+      max_tokens: maxTokens, // User-selected value from slider
       top_p: 1.0,
       frequency_penalty: 0,
       presence_penalty: 0,
