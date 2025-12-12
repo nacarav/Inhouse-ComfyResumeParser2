@@ -52,7 +52,7 @@ export default function App() {
     setLoading(true);
 
     const isSummary = analysisType === 'summary';
-    setOutput(isResume ? 'Processing PDF and analyzing resume...' : 'Processing PDF and generating summary...');
+    setOutput(!isSummary ? 'Processing PDF and analyzing resume...' : 'Processing PDF and generating summary...');
 
     try {
       const formData = new FormData();
