@@ -1,0 +1,107 @@
+{
+  "2": {
+    "inputs": {
+      "value": "Keep feedback concise; focus on ATS keywords"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "constraints"
+    }
+  },
+  "3": {
+    "inputs": {
+      "value": "PLACEHOLDER_TEXT"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "resume_as_text"
+    }
+  },
+  "4": {
+    "inputs": {
+      "string_a": [
+        "2",
+        0
+      ],
+      "string_b": [
+        "3",
+        0
+      ],
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate"
+    }
+  },
+  "5": {
+    "inputs": {
+      "string_a": [
+        "6",
+        0
+      ],
+      "string_b": [
+        "4",
+        0
+      ],
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate"
+    }
+  },
+  "6": {
+    "inputs": {
+      "value": "Tasks:  Give a 6–10 bullet \"Strengths\" section.  Give a 6–10 bullet \"Issues / Gaps\" section (specific).  Provide 8–15 ATS keywords to add (tailored to the role).  Rewrite the top 3 weakest bullet points into stronger accomplishment bullets (quantified where possible).  End with a \"90-second elevator pitch\" the candidate could say."
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "resume_reviewer_prompt"
+    }
+  },
+  "7": {
+    "inputs": {
+      "model": "gpt-4.1-nano",
+      "force_regen": false,
+      "prompt": [
+        "5",
+        0
+      ],
+      "system_prompt": "temperature: 0.2 to 0.4\nmax_tokens: 900 to 1400\ntop_p: 1.0\nfrequency_penalty / presence_penalty: 0",
+      "client": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "OAIAPI_ChatCompletion",
+    "_meta": {
+      "title": "OpenAI API - Chat Completion"
+    }
+  },
+  "8": {
+    "inputs": {
+      "base_url": "https://api.openai.com/v1",
+      "max_retries": 2,
+      "timeout": 600,
+      "api_key": "OPENAI_API_KEY_PLACEHOLDER"
+    },
+    "class_type": "OAIAPI_Client",
+    "_meta": {
+      "title": "OpenAI API - Client"
+    }
+  },
+  "9": {
+    "inputs": {
+      "preview": "",
+      "source": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Preview as Text"
+    }
+  }
+}
