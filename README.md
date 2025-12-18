@@ -4,6 +4,8 @@
 
 An AI-powered tool that reviews resumes with industry-specific feedback and summarizes PDF documents. Built with Next.js and OpenAI API.
 
+Live Deployment Link: https://inhouse-comfy-resume-parser2.vercel.app/
+
 ## Features
 
 - 📄 **Resume Reviewer**: Get detailed feedback with strengths, issues, ATS keywords, and improved bullet points
