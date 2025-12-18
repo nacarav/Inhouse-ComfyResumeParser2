@@ -123,6 +123,74 @@ h1 {
   font-weight: 500;
 }
 
+/* Industry/Role Selector Styles */
+.industry-role-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--secondary-bg);
+  padding: 1rem;
+  border-radius: var(--round);
+  border: 1px solid var(--border-color);
+}
+
+.industry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.industry-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdown-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.industry-dropdown,
+.role-dropdown {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.industry-dropdown:hover,
+.role-dropdown:hover {
+  border-color: var(--accent-color);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.industry-dropdown:focus,
+.role-dropdown:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.industry-dropdown option,
+.role-dropdown option {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
 .length-control {
   background: var(--secondary-bg);
   padding: 1rem;
@@ -179,6 +247,52 @@ h1 {
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.slider-with-marker {
+  position: relative;
+  flex: 1;
+}
+
+.default-marker {
+  position: absolute;
+  top: -18px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid rgba(59, 130, 246, 0.7);
+  transform: translateX(-50%);
+  cursor: help;
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+.default-marker:hover {
+  border-top-color: rgba(59, 130, 246, 1);
+  top: -20px;
+  border-left-width: 10px;
+  border-right-width: 10px;
+  border-top-width: 14px;
+}
+
+.default-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.5rem;
+  background: var(--primary-bg);
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: normal;
+  width: 200px;
+  border: 1px solid var(--border-color);
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .slider-label {
@@ -244,12 +358,25 @@ h1 {
   font-weight: 600;
 }
 
+.personality-quadrant {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .personality-control {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
   width: 100%;
+}
+
+.length-control-vertical {
+  background: var(--secondary-bg);
+  padding: 1rem;
+  border-radius: var(--round);
+  border: 1px solid var(--border-color);
 }
 
 .personality-header {
@@ -271,6 +398,53 @@ h1 {
   align-items: center;
   gap: 1rem;
   height: 300px;
+}
+
+.vertical-slider-with-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.default-marker-vertical {
+  position: absolute;
+  left: -20px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid rgba(59, 130, 246, 0.7);
+  transform: translateY(-50%);
+  cursor: help;
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+.default-marker-vertical:hover {
+  border-left-color: rgba(59, 130, 246, 1);
+  left: -22px;
+  border-top-width: 10px;
+  border-bottom-width: 10px;
+  border-left-width: 14px;
+}
+
+.default-tooltip-vertical {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 1rem;
+  background: var(--primary-bg);
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: normal;
+  width: 220px;
+  border: 1px solid var(--border-color);
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: left;
 }
 
 .vertical-slider-label {

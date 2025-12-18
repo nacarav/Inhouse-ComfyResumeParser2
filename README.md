@@ -1,24 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inhouse Resume Reviewer + PDF Summarizer
 
-## Getting Started
+**CPSC 481 Project** by Nick Caravaggio, Angel Penaloza, Greycin Kim, Thien La.
 
-First, run the development server:
+An AI-powered tool that reviews resumes with industry-specific feedback and summarizes PDF documents. Built with Next.js and OpenAI API.
+
+## Features
+
+- 📄 **Resume Reviewer**: Get detailed feedback with strengths, issues, ATS keywords, and improved bullet points
+- 🎯 **Industry Targeting**: Choose from 11 industries and 40+ specific roles for tailored recommendations
+- 📊 **PDF Summarizer**: Quickly summarize any PDF document with key points and action items
+- ⚙️ **Configurable Controls**: Adjust response detail level and personality/creativity
+- 📈 **Token Tracking**: Monitor OpenAI API usage with detailed token counts
+
+## Prerequisites
+
+- Node.js 18+ installed
+- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/nacarav/Inhouse-ComfyResumeParser2.git
+cd Inhouse-ComfyResumeParser2
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```bash
+# .env.local
+OPENAI_API_KEY=your-openai-api-key-here
+```
+
+Replace `your-openai-api-key-here` with your actual OpenAI API key.
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Select Mode**: Choose "Resume Reviewer" or "PDF Summarizer"
+2. **Configure (Optional)**:
+   - For resumes: Select industry and specific role for tailored feedback
+   - Adjust Detail Level (400-1800 tokens, default: 900)
+   - Adjust Response Personality (0.2-1.6 temperature, default: 0.3)
+3. **Upload PDF**: Click "Choose File" and select your PDF
+4. **Analyze**: Click "Upload & Analyze"
+5. **Review Results**: View AI-generated feedback with token usage stats
+
+## Technologies Used
+
+- **Framework**: Next.js 16 with React 19
+- **AI**: OpenAI API (gpt-4o-mini)
+- **PDF Processing**: pdf2json
+- **Styling**: Custom CSS with CSS variables
+- **Markdown**: react-markdown for formatted output
 
 ## Learn More
 

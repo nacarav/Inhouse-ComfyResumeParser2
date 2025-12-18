@@ -9,6 +9,8 @@ export async function POST(request) {
     const type = formData.get('type'); // 'resume' or 'summary'
     const maxTokens = parseInt(formData.get('maxTokens')) || 1100;
     const temperature = parseFloat(formData.get('temperature')) || 0.9;
+    const industry = formData.get('industry') || '';
+    const role = formData.get('role') || '';
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -71,13 +73,15 @@ export async function POST(request) {
     if (type === 'summary') {
       result = await callOpenAIForSummary(extractedText, maxTokens, temperature);
     } else {
-      result = await callOpenAIForResume(extractedText, maxTokens, temperature);
+      result = await callOpenAIForResume(extractedText, maxTokens, temperature, industry, role);
     }
 
     return NextResponse.json({
       success: true,
       text: extractedText,
-      result: result
+      result: result,
+      industry: type === 'resume' ? industry : undefined,
+      role: type === 'resume' ? role : undefined
     });
 
   } catch (error) {
@@ -89,7 +93,7 @@ export async function POST(request) {
   }
 }
 
-async function callOpenAIForResume(resumeText, maxTokens, temperature) {
+async function callOpenAIForResume(resumeText, maxTokens, temperature, industry = '', role = '') {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   if (!OPENAI_API_KEY) {
@@ -103,11 +107,21 @@ async function callOpenAIForResume(resumeText, maxTokens, temperature) {
     });
 
     // Replicate the prompt structure from the ComfyUI workflow
+    const reviewPrompt = "Tasks: Give a 6–10 bullet \"Strengths\" section. Give a 6–10 bullet \"Issues / Gaps\" section (specific). Provide 8–15 ATS keywords to add (tailored to the role). Rewrite the top 3 weakest bullet points into stronger accomplishment bullets (quantified where possible). End with a \"90-second elevator pitch\" the candidate could say.";
     const constraints = "Keep feedback concise; focus on ATS keywords";
-    const reviewPrompt = "Tasks:  Give a 6–10 bullet \"Strengths\" section.  Give a 6–10 bullet \"Issues / Gaps\" section (specific).  Provide 8–15 ATS keywords to add (tailored to the role).  Rewrite the top 3 weakest bullet points into stronger accomplishment bullets (quantified where possible).  End with a \"90-second elevator pitch\" the candidate could say.";
+
+    // Industry-specific guidance
+    let industryGuidance = '';
+    if (industry) {
+      industryGuidance = `\n\nIMPORTANT: This resume is being reviewed for the ${industry} industry`;
+      if (role) {
+        industryGuidance += `, specifically for the role: ${role}`;
+      }
+      industryGuidance += `. Please tailor ALL feedback, keywords, and recommendations specifically for this industry/role. Focus on industry-specific skills, certifications, and accomplishments that matter most in ${industry}.`;
+    }
 
     // Concatenate the full prompt
-    const fullPrompt = reviewPrompt + constraints + resumeText;
+    const fullPrompt = reviewPrompt + constraints + industryGuidance + "\n\nRESUME TEXT:\n" + resumeText;
 
     console.log('========================================');
     console.log('Calling OpenAI API directly');
@@ -123,7 +137,9 @@ async function callOpenAIForResume(resumeText, maxTokens, temperature) {
       messages: [
         {
           role: "system",
-          content: "You are a resume review expert. Provide constructive feedback focusing on ATS optimization and impactful accomplishments."
+          content: industry
+            ? `You are a resume review expert specializing in ${industry}${role ? ` with deep knowledge of ${role} positions` : ''}. Provide constructive feedback focusing on ATS optimization, industry-specific keywords, and impactful accomplishments relevant to this field.`
+            : "You are a resume review expert. Provide constructive feedback focusing on ATS optimization and impactful accomplishments."
         },
         {
           role: "user",
